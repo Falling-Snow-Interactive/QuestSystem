@@ -1,0 +1,19 @@
+{
+    "name": "Fsi.QuestSystem.Runtime",
+    "rootNamespace": "Fsi.QuestSystem",
+    "references": [
+        "GUID:f90ad862727b74b76a2c5e0dcf9510f7",
+        "GUID:ee475a89c5e34c06bfdb1064b3a78a63",
+        "GUID:0aede76063b894034a434ed76d1c99ba",
+        "GUID:ff3151e387f3d42e1b5e8c10871ccc37"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

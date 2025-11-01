@@ -5,12 +5,21 @@
   "description": "Quest System package developed by Falling Snow Interactive.",
   "unity": "6000.2",
   "unityRelease": "6f2",
-  "keywords": ["unity", "quests", "narrative"],
+  "keywords": [
+    "unity",
+    "quests",
+    "narrative"
+  ],
   "author": {
     "name": "Kira Dinan",
     "email": "kira.dinan@fallingsnowinteractive.ca"
   },
   "hideInEditor": false,
   "dependencies": {
+    "com.fallingsnowinteractive.localization": "0.0.1",
+    "com.fallingsnowinteractive.characters": "0.0.1",
+    "com.fallingsnowinteractive.inventory": "0.0.1",
+    "com.fallingsnowinteractive.ui": "0.0.2",
+    "com.fallingsnowinteractive.datasystem": "0.0.1"
   }
 }
