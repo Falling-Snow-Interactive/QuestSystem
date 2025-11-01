@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Fsi.QuestSystem.Types;
 using Fsi.Ui.Spacers;
 using UnityEditor;
 using UnityEditor.UIElements;
