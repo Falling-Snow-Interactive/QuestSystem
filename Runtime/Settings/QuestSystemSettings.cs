@@ -40,7 +40,7 @@ namespace Fsi.QuestSystem.Settings
             // Group all quests by their QuestDataId
             List<IGrouping<QuestDataID, QuestData>> duplicateGroups = quests
                 .Where(q => q)
-                .GroupBy(q => q.Id)
+                .GroupBy(q => q.ID)
                 .Where(g => QuestDataID.None != g.Key && g.Count() > 1)
                 .ToList();
 
