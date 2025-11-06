@@ -38,15 +38,15 @@ namespace Fsi.QuestSystem.Settings
             quests.RemoveAll(q => q == null);
 
             // Group all quests by their QuestDataId
-            List<IGrouping<QuestDataID, QuestData>> duplicateGroups = quests
+            List<IGrouping<QuestID, QuestData>> duplicateGroups = quests
                 .Where(q => q)
                 .GroupBy(q => q.ID)
-                .Where(g => QuestDataID.None != g.Key && g.Count() > 1)
+                .Where(g => QuestID.None != g.Key && g.Count() > 1)
                 .ToList();
 
             if (duplicateGroups.Count > 0)
             {
-                foreach (IGrouping<QuestDataID, QuestData> group in duplicateGroups)
+                foreach (IGrouping<QuestID, QuestData> group in duplicateGroups)
                 {
                     string names = string.Join(", ", group.Select(q => q.name));
                     Debug.LogWarning($"QuestSystemSettings | Duplicate Quest.Id detected: '{group.Key}' used by {names}",
