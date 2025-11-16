@@ -8,8 +8,8 @@ namespace Fsi.QuestSystem.Gameplay
     {
         [QuestSelector]
         [SerializeField]
-        private Quest data;
-        public Quest Data => data;
+        private QuestInstance data;
+        public QuestInstance Data => data;
 
         public void Grant()
         {

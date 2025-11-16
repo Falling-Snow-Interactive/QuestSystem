@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using Fsi.QuestSystem.Data;
+using Fsi.QuestSystem.Libraries;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,48 +11,22 @@ namespace Fsi.QuestSystem.Settings
 
         private static QuestSystemSettings settings;
         public static QuestSystemSettings Settings => settings ??= GetOrCreateSettings();
-        
+
         [Header("Library")]
 
         [SerializeField]
-        private List<QuestData> quests = new();
-        public static List<QuestData> Quests => Settings.quests;
+        private QuestLibrary quests;
+        public static QuestLibrary Quests => Settings.quests;
+
+        // [SerializeField]
+        // private List<QuestData> quests = new();
+        // public static List<QuestData> Quests => Settings.quests;
 
         #region Validate
         
         public void Validate()
         {
-            ValidateQuests();
-        }
-
-        private void ValidateQuests()
-        {
-            #if UNITY_EDITOR
-            if (quests == null || quests.Count == 0)
-            {
-                return;
-            }
-            
-            quests.RemoveAll(q => q == null);
-
-            // Group all quests by their QuestDataId
-            List<IGrouping<QuestID, QuestData>> duplicateGroups = quests
-                .Where(q => q)
-                .GroupBy(q => q.ID)
-                .Where(g => QuestID.None != g.Key && g.Count() > 1)
-                .ToList();
-
-            if (duplicateGroups.Count > 0)
-            {
-                foreach (IGrouping<QuestID, QuestData> group in duplicateGroups)
-                {
-                    string names = string.Join(", ", group.Select(q => q.name));
-                    Debug.LogWarning($"QuestSystemSettings | Duplicate Quest.Id detected: '{group.Key}' used by {names}",
-                        this
-                    );
-                }
-            }
-            #endif
+            quests.Validate();
         }
         
         #endregion

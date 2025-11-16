@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Fsi.QuestSystem.Steps
 {
+    /// <summary>
+    /// Serializable data describing a single quest step and its required parameters.
+    /// </summary>
     [Serializable]
     public class StepData : ISerializationCallbackReceiver
     {
@@ -15,54 +18,69 @@ namespace Fsi.QuestSystem.Steps
         [SerializeField]
         private string name;
         
+        /// <summary>
+        /// Type of step.
+        /// </summary>
         [SerializeField]
         private StepType stepType = StepType.None;
         public StepType StepType => stepType;
         
-        // Enemy
+        /// <summary>
+        /// Enemy type to be defeated.
+        /// </summary>
         [ShowIf(nameof(stepType), StepType.Enemy)]
         [EnemySelector]
         [SerializeField]
-        private EnemyData enemy;
-        public EnemyData Enemy => enemy;
+        private EnemyDataEntry enemy;
+        public EnemyDataEntry Enemy => enemy;
 
+        /// <summary>
+        /// Number of enemies of set type to be defeated.
+        /// </summary>
         [ShowIf(nameof(stepType), StepType.Enemy)]
         [SerializeField]
         private int numberOfEnemies = 1;
         public int NumberOfEnemies => numberOfEnemies;
 
-        // NPC
+        /// <summary>
+        /// NPC to interact with.
+        /// </summary>
         [ShowIf(nameof(stepType), Steps.StepType.NPC)]
         [NPCSelector]
         [SerializeField]
-        private NPCData npc;
-        public NPCData Npc => npc;
+        private NPCDataEntry npc;
+        public NPCDataEntry Npc => npc;
         
-        // Item
+        /// <summary>
+        /// Item to deliver.
+        /// </summary>
         [ShowIf(nameof(stepType), StepType.Item)]
         [SerializeField]
-        private ItemData item;
-        public ItemData Item => item;
+        private ItemDataEntry item;
+        public ItemDataEntry Item => item;
 
+        /// <summary>
+        /// NPC to deliver item to.
+        /// </summary>
         [ShowIf(nameof(stepType), Steps.StepType.Item)]
         [SerializeField]
-        private NPCData deliverTo;
-        public NPCData DeliverTo => deliverTo;
+        private NPCDataEntry deliverTo;
+        public NPCDataEntry DeliverTo => deliverTo;
         
-        // Shared
+        /// <summary>
+        /// Number of items to be delivered to chosen NPC.
+        /// </summary>
         [ShowIf(nameof(stepType), StepType.Item)]
         [SerializeField]
         private int numberOfItem = 1;
         public int NumberOfItem => numberOfItem;
-        
-        // TODO - This
-        // [Header("Location Step")]
-        //
-        // [Header("Item Step")]
-        //
-        // [SerializeField]
-        // private int a = 0;
 
+        #region ToString
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             string s = $"{stepType} - ";
@@ -71,6 +89,7 @@ namespace Fsi.QuestSystem.Steps
                 StepType.None => "",
                 StepType.Enemy => $"{enemy} x{numberOfEnemies}",
                 StepType.NPC => $"{npc}",
+                // TODO - Go to location. Will probably just be attached to a trigger area that says "Hey! I'm part of X quest at Y step". - Kira
                 // StepType.Location => expr,
                 StepType.Item => $"{item} x{numberOfItem}",
                 _ => "",
@@ -78,12 +97,24 @@ namespace Fsi.QuestSystem.Steps
 
             return s;
         }
+        
+        #endregion
 
+        #region Serialization
+        
+        /// <summary>
+        /// 
+        /// </summary>
         public void OnBeforeSerialize()
         {
             name = ToString();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void OnAfterDeserialize() { }
+        
+        #endregion
     }
 }

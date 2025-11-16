@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Fsi.QuestSystem.Data;
-using Fsi.QuestSystem.Settings;
 using Fsi.QuestSystem.Steps;
 using UnityEngine;
 
@@ -10,48 +7,39 @@ namespace Fsi.QuestSystem
     public class QuestManager : MonoBehaviour
     {
         [SerializeField]
-        private List<Quest> quests = new();
-        public List<Quest> Quests => quests;
-
-        private void Start()
-        {
-            foreach (QuestData q in QuestSystemSettings.Quests)
-            {
-                Quest quest = new(q);
-                quests.Add(quest);
-            }
-        }
+        private List<QuestInstance> quests = new();
+        public List<QuestInstance> Quests => quests;
         
-        public bool TryGetQuest(QuestID id, out Quest quest)
+        public bool TryGetQuest(string id, out QuestInstance questInstance)
         {
-            foreach (Quest q in quests)
+            foreach (QuestInstance q in quests)
             {
                 if (q.Data.ID == id)
                 {
-                    quest = q;
+                    questInstance = q;
                     return true;
                 }
             }
 
-            quest = null;
+            questInstance = null;
             return false;
         }
 
-        public bool CheckQuestStatus(QuestID questID, QuestStatus status)
+        public bool CheckQuestStatus(string questID, QuestStatus status)
         {
-            if (TryGetQuest(questID, out Quest quest))
+            if (TryGetQuest(questID, out QuestInstance quest))
             {
-                return quest.QuestStatus == status;
+                return quest.Status == status;
             }
 
             return false;
         }
 
-        public bool CheckQuestStepStatus(QuestID questID, int step, QuestStatus status)
+        public bool CheckQuestStepStatus(string questID, int step, QuestStatus status)
         {
-            if (TryGetQuest(questID, out Quest quest) && quest.TryGetStep(step, out Step s))
+            if (TryGetQuest(questID, out QuestInstance quest) && quest.TryGetStep(step, out StepInstance s))
             {
-                return s.QuestStatus == status;
+                return s.Status == status;
             }
 
             return false;

@@ -1,0 +1,25 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.fallingsnowinteractive.questsystem/Editor/Tracker/QuestTrackerEditor.uss?fileID=7433441132597879392&amp;guid=648b039e2619c4b6babacad0f5680a62&amp;type=3#QuestTrackerEditor" />
+    <ui:VisualElement name="root" style="flex-grow: 1; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px;">
+        <ui:Label text="Quest Tracker" name="title_label" />
+        <Fsi.Ui.Spacers.Spacer />
+        <ui:VisualElement name="enabled_group" style="flex-grow: 1;">
+            <ui:VisualElement name="add_quest_group" style="flex-direction: row;">
+                <ui:DropdownField name="quest_dropdown" index="0" style="flex-grow: 1;" />
+                <ui:Button text="Add" name="quest_add_button" style="min-width: 50px;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; height: 5px;" />
+            <ui:MultiColumnListView enabled="true" name="quest_list" reorderable="true" horizontal-scrolling="true" show-foldout-header="false" header-title="Active Quests" show-add-remove-footer="false" allow-add="false" allow-remove="false">
+                <ui:Columns primary-column-name="ID" reorderable="false" resizable="true" stretch-mode="Grow" resize-preview="false">
+                    <ui:Column name="id" title="ID" stretchable="false" resizable="true" width="100px" optional="false" />
+                    <ui:Column name="name" title="Name" stretchable="false" width="200px" optional="false" />
+                    <ui:Column name="data" title="Data" stretchable="false" width="100px" optional="false" resizable="false" sortable="false" />
+                    <ui:Column name="status" title="Status" width="100px" resizable="true" />
+                </ui:Columns>
+            </ui:MultiColumnListView>
+        </ui:VisualElement>
+        <ui:VisualElement name="disabled_group" enabled="true" style="flex-grow: 1; display: none;">
+            <ui:Label text="This is show when the game isn&apos;t active or the quest tracker doesn&apos;t exist." style="white-space: normal;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

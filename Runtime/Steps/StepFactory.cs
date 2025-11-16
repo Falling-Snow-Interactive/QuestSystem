@@ -4,14 +4,14 @@ namespace Fsi.QuestSystem.Steps
 {
     public static class StepFactory
     {
-        public static Step CreateStep(StepData data)
+        public static StepInstance CreateStep(StepData data, QuestStatus status)
         {
             return data.StepType switch
             {
-                StepType.Enemy => new EnemyStep(data),
-                StepType.NPC => new NPCStep(data),
-                StepType.Location => new LocationStep(data),
-                StepType.Item => new ItemStep(data),
+                StepType.Enemy => new EnemyStepInstance(data, status),
+                StepType.NPC => new NPCStepInstance(data, status),
+                StepType.Location => new LocationStepInstance(data, status),
+                StepType.Item => new ItemStepInstance(data, status),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
