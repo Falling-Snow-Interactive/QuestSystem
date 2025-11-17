@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Fsi.QuestSystem
 {
     [CreateAssetMenu(menuName = "Fsi/Quest System/Quests/Data", fileName = "New Quest Data")]
-    public class QuestData : ScriptableDataEntry<string>
+    public class QuestData : ScriptableData<string>
     {
         [Header("Steps")]
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Fsi.Gameplay;
 using Fsi.QuestSystem.Settings;
+using Fsi.QuestSystem.Steps;
 using UnityEngine;
 
 namespace Fsi.QuestSystem.Tracker
@@ -51,6 +52,8 @@ namespace Fsi.QuestSystem.Tracker
         
         #endregion
         
+        #region Inspector Fields
+        
         [Header("Quests")]
         
         [Tooltip("The quest currently pinned for quick reference (e.g., HUD tracking).")]
@@ -60,6 +63,8 @@ namespace Fsi.QuestSystem.Tracker
         [Tooltip("The full list of active quests currently tracked by the system.")]
         [SerializeField]
         private List<QuestInstance> quests;
+        
+        #endregion
         
         #region Quests Properties
 
@@ -74,6 +79,8 @@ namespace Fsi.QuestSystem.Tracker
         public IReadOnlyList<QuestInstance> Quests => quests;
         
         #endregion
+        
+        #region MonoBehaviour Events
 
         /// <summary>
         /// Initializes the singleton tracker and notifies listeners.
@@ -97,6 +104,10 @@ namespace Fsi.QuestSystem.Tracker
                 PinQuest(quest);
             }
         }
+        
+        #endregion
+
+        #region Quest Management
         
         #region Add
         
@@ -210,7 +221,7 @@ namespace Fsi.QuestSystem.Tracker
         
         #endregion
         
-        #region Chest List
+        #region Contains
 
         /// <summary>
         /// Returns true if a quest with the given ID exists in the tracker.
@@ -225,6 +236,10 @@ namespace Fsi.QuestSystem.Tracker
             IEnumerable<QuestInstance> q = Quests.Where(x => x.ID == questID);
             return q.Any();
         }
+        
+        #endregion
+        
+        #region Get
         
         /// <summary>
         /// Attempts to find a quest with the given ID.
@@ -279,6 +294,25 @@ namespace Fsi.QuestSystem.Tracker
             }
         }
         
+        #endregion
+        
+        #endregion
+
+        #region Quest Status
+
+        public bool CheckQuestStatus(string questID, QuestStatus status)
+        {
+            return TryGet(questID, out QuestInstance quest) 
+                   && quest.Status == status;
+        }
+
+        public bool CheckQuestStepStatus(string questID, int index, QuestStatus status)
+        {
+            return TryGet(questID, out QuestInstance quest)
+                   && quest.TryGetStep(index, out StepInstance step)
+                   && step.Status == status;
+        }
+
         #endregion
     }
 }
