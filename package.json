@@ -21,6 +21,7 @@
     "com.fallingsnowinteractive.inventory": "0.0.1",
     "com.fallingsnowinteractive.ui": "0.0.2",
     "com.fallingsnowinteractive.datasystem": "0.0.1",
-    "com.fallingsnowinteractive.gameplay": "0.1.2"
+    "com.fallingsnowinteractive.gameplay": "0.1.2",
+    "com.fallingsnowinteractive.settings": "0.0.1"
   }
 }

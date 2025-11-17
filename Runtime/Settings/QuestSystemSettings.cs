@@ -1,3 +1,5 @@
+using System;
+using Fsi.Localization;
 using Fsi.QuestSystem.Libraries;
 using UnityEditor;
 using UnityEngine;
@@ -18,9 +20,19 @@ namespace Fsi.QuestSystem.Settings
         private QuestLibrary quests;
         public static QuestLibrary Quests => Settings.quests;
 
-        // [SerializeField]
-        // private List<QuestData> quests = new();
-        // public static List<QuestData> Quests => Settings.quests;
+        [Header("Localization")]
+
+        [SerializeField]
+        private LocEntry locEnemyStep;
+        
+        [SerializeField]
+        private LocEntry locNPCStep;
+        
+        [SerializeField]
+        private LocEntry locItemStep;
+        
+        [SerializeField]
+        private LocEntry locLocationStep;
 
         #region Validate
         

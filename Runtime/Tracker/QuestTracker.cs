@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Fsi.Gameplay;
+using Fsi.QuestSystem.Data.Selector;
 using Fsi.QuestSystem.Settings;
 using Fsi.QuestSystem.Steps;
 using UnityEngine;
@@ -66,6 +67,16 @@ namespace Fsi.QuestSystem.Tracker
         
         #endregion
         
+        #if UNITY_EDITOR
+
+        [Header("Debug")]
+
+        [QuestSelector]
+        [SerializeField]
+        private List<QuestData> addOnStart;
+        
+        #endif
+        
         #region Quests Properties
 
         /// <summary>
@@ -99,6 +110,15 @@ namespace Fsi.QuestSystem.Tracker
         /// </summary>
         private void Start()
         {
+            #if UNITY_EDITOR
+
+            foreach (QuestData q in addOnStart)
+            {
+                Add(q);
+            }
+            
+            #endif
+            
             if (TryGet(pinnedID, out QuestInstance quest))
             {
                 PinQuest(quest);

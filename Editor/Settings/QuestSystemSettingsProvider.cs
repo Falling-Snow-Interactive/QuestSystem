@@ -1,18 +1,19 @@
-using Fsi.Ui.Spacers;
+using Fsi.Settings;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace Fsi.QuestSystem.Settings
 {
     public static class QuestSystemSettingsProvider
     {
+        private const string Name = "Quest System";
+        
         [SettingsProvider]
         public static SettingsProvider CreateSettingsProvider()
         {
-            SettingsProvider provider = new("Fsi/Quest System", SettingsScope.Project)
+            SettingsProvider provider = new($"Fsi/{Name}", SettingsScope.Project)
             {
-                label = "Quest System",
+                label = Name,
                 activateHandler = OnActivate,
             };
         
@@ -21,27 +22,13 @@ namespace Fsi.QuestSystem.Settings
 
         private static void OnActivate(string searchContext, VisualElement root)
         {
-            root.style.marginTop = 5;
-            root.style.marginRight = 5;
-            root.style.marginLeft = 5;
-            root.style.marginBottom = 5;
-    
-            SerializedObject settingsProp = QuestSystemSettings.GetSerializedSettings();
-        
-            Label title = new("Quest System Settings");
-            root.Add(title);
-        
-            root.Add(new Spacer());
-        
-            root.Add(new InspectorElement(settingsProp));
+            SerializedObject prop = QuestSystemSettings.GetSerializedSettings();
             
-            root.Add(new Spacer());
-            
-            root.Add(new Button(OnValidateButton){text = "Validate", style = { height = 20}});
-        
-            root.Bind(settingsProp);
+            VisualElement settings = SettingsEditorUtility.CreateSettingsPage(prop, Name);
+            settings.Add(new Button(OnValidateButton){text = "Validate", style = { height = 20}});
+            root.Add(settings);
         }
-
+        
         private static void OnValidateButton()
         {
             QuestSystemSettings.Settings.Validate();

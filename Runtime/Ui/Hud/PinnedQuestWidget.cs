@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Fsi.QuestSystem.Steps;
 using Fsi.QuestSystem.Tracker;
 using TMPro;
 using UnityEngine;
@@ -67,6 +68,11 @@ namespace Fsi.QuestSystem.Ui.Hud
         {
             ShowContent();
             titleText.text = quest.Name;
+            if (quest.TryGetActiveQuestStep(out StepInstance step))
+            {
+                TMP_Text stepText = Instantiate(stepPrefab, stepGroup);
+                stepText.text = step.GetDescription();
+            }
         }
 
         private void ClearQuest()
