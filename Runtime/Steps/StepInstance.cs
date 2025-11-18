@@ -48,11 +48,15 @@ namespace Fsi.QuestSystem.Steps
         /// Gets the static configuration data that defines this quest step.
         /// </summary>
         public StepData Data => data;
-        
+
         /// <summary>
         /// Gets the current status of this step (e.g., Active, Completed, Failed).
         /// </summary>
-        public QuestStatus Status => status;
+        public QuestStatus Status
+        {
+            get => status;
+            set => status = value;
+        }
         
         /// <summary>
         /// Gets the current progress toward completing this step.

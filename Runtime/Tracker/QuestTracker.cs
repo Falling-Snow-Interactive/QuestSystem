@@ -316,23 +316,53 @@ namespace Fsi.QuestSystem.Tracker
         
         #endregion
         
+        #region Status
+
+        public QuestStatus GetQuestStatus(string questID)
+        {
+            return TryGet(questID, out QuestInstance quest) ? quest.Status : QuestStatus.None;
+        }
+
+        public bool SetQuestStatus(string questID, QuestStatus status)
+        {
+            if (TryGet(questID, out QuestInstance quest))
+            {
+                quest.Status = status;
+                return true;
+            }
+
+            return false;
+        }
+
+        #region Step
+        
+        public QuestStatus GetQuestStepStatus(string questID, int index)
+        {
+            if (TryGet(questID, out QuestInstance quest)
+                && quest.TryGetStep(index, out StepInstance step))
+            {
+                return step.Status;
+            }
+
+            return QuestStatus.None;
+        }
+
+        public bool SetQuestStepStatus(string questID, int index, QuestStatus status)
+        {
+            if (TryGet(questID, out QuestInstance quest)
+                && quest.TryGetStep(index, out StepInstance step))
+            {
+                step.Status = status;
+                return true;
+            }
+
+            return false;
+        }
+        
         #endregion
-
-        #region Quest Status
-
-        public bool CheckQuestStatus(string questID, QuestStatus status)
-        {
-            return TryGet(questID, out QuestInstance quest) 
-                   && quest.Status == status;
-        }
-
-        public bool CheckQuestStepStatus(string questID, int index, QuestStatus status)
-        {
-            return TryGet(questID, out QuestInstance quest)
-                   && quest.TryGetStep(index, out StepInstance step)
-                   && step.Status == status;
-        }
-
+        
+        #endregion
+        
         #endregion
     }
 }

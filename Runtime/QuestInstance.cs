@@ -29,7 +29,11 @@ namespace Fsi.QuestSystem
         /// <summary>
         /// 
         /// </summary>
-        public QuestStatus Status => status;
+        public QuestStatus Status
+        {
+            get => status;
+            set => status = value;
+        }
         
         /// <summary>
         /// 
@@ -123,6 +127,17 @@ namespace Fsi.QuestSystem
                 {
                     return true;
                 }
+            }
+
+            return false;
+        }
+
+        public bool SetStepStatus(int index, QuestStatus status)
+        {
+            if (steps.Count > index)
+            {
+                steps[index].Status = status;
+                return true;
             }
 
             return false;
