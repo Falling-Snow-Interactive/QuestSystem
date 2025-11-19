@@ -1,7 +1,6 @@
 using System;
 using Fsi.Characters.Data;
 using Fsi.Characters.Data.Selector;
-using Fsi.Characters.Selector;
 using Fsi.Gameplay;
 using Fsi.Inventory.Items;
 using Fsi.Inventory.Items.Selector;
@@ -37,15 +36,15 @@ namespace Fsi.QuestSystem.Steps
         
         [ShowIf(nameof(stepType), StepType.Enemy)]
         [Tooltip("Enemy type to be defeated.")]
-        [EnemySelector]
+        // [EnemySelector]
         [SerializeField]
-        private EnemyData enemy;
+        private string enemy;
         
         [ShowIf(nameof(stepType), Steps.StepType.NPC)]
         [Tooltip("NPC to interact with.")]
-        [NPCSelector]
+        [CharacterSelector]
         [SerializeField]
-        private NPCData npc;
+        private CharacterData npc;
         
         [ShowIf(nameof(stepType), StepType.Item)]
         [Tooltip("Item to deliver.")]
@@ -55,9 +54,9 @@ namespace Fsi.QuestSystem.Steps
         
         [ShowIf(nameof(stepType), Steps.StepType.Item)]
         [Tooltip("NPC to deliver item to.")]
-        [NPCSelector]
+        [CharacterSelector]
         [SerializeField]
-        private NPCData deliverTo;
+        private CharacterData deliverTo;
         
         [Tooltip("Depending on Step Type:\n" +
                  "- Enemy: Number of enemies to defeat\n" +
@@ -81,7 +80,7 @@ namespace Fsi.QuestSystem.Steps
         /// <remarks>
         /// Used when <see cref="StepType"/> is <see cref="Steps.StepType.Enemy"/>.
         /// </remarks>
-        public EnemyData Enemy => enemy;
+        // public CharacterData Enemy => enemy;
         
         /// <summary>
         /// NPC to interact with as part of this step.
@@ -89,7 +88,7 @@ namespace Fsi.QuestSystem.Steps
         /// <remarks>
         /// Used when <see cref="StepType"/> is <see cref="Steps.StepType.NPC"/>.
         /// </remarks>
-        public NPCData Npc => npc;
+        public CharacterData Npc => npc;
         
         /// <summary>
         /// Item that must be delivered as part of this step.
@@ -105,7 +104,7 @@ namespace Fsi.QuestSystem.Steps
         /// <remarks>
         /// Used when <see cref="StepType"/> is <see cref="Steps.StepType.Item"/>.
         /// </remarks>
-        public NPCData DeliverTo => deliverTo;
+        public CharacterData DeliverTo => deliverTo;
         
         /// <summary>
         /// Amount associated with this step.

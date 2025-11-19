@@ -9,6 +9,6 @@ namespace Fsi.QuestSystem.Selector
     [CustomPropertyDrawer(typeof(QuestSelectorAttribute))]
     public class QuestSelectorAttributeDrawer : SelectorAttributeDrawer<QuestData, string>
     {
-        protected override List<QuestData> GetData() => QuestSystemSettings.Quests.Entries;
+        protected override List<QuestData> GetEntries() => QuestSystemSettings.Quests.Entries;
     }
 }

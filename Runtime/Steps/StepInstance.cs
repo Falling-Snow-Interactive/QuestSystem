@@ -119,7 +119,7 @@ namespace Fsi.QuestSystem.Steps
             return data.StepType switch
             {
                 StepType.None => "None",
-                StepType.Enemy => $"Defeat {value}/{data.Amount} {data.Enemy.Name}",
+                // StepType.Enemy => $"Defeat {value}/{data.Amount} {data.Enemy.Name}",
                 StepType.NPC => $"Talk to {data.Npc.Name}",
                 StepType.Location => $"Go to location.name",
                 StepType.Item => $"Bring {value}/{data.Amount} {data.Item.Name} to {data.Npc}",
