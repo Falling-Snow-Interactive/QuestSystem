@@ -19,7 +19,7 @@ namespace Fsi.QuestSystem.Steps
     /// </para>
     /// </remarks>
     [Serializable]
-    public class StepInstance
+    public abstract class StepInstance
     {
         /// <summary>
         /// Invoked whenever the step's progress value changes.
@@ -65,6 +65,7 @@ namespace Fsi.QuestSystem.Steps
         /// For steps with amounts (Enemy, Item), this is clamped between 0 and <see cref="StepData.Amount"/>.
         /// For steps without amounts (NPC, Location), this is typically unused.
         /// </remarks>
+        [Obsolete]
         public int Value => value;
         
         #endregion
@@ -73,39 +74,16 @@ namespace Fsi.QuestSystem.Steps
         /// Creates a new runtime step instance with the given data and starting status.
         /// </summary>
         /// <param name="data">The static step configuration data.</param>
-        /// <param name="status">The initial quest status for this step.</param>
-        public StepInstance(StepData data, QuestStatus status)
+        protected StepInstance(StepData data)
         {
             this.data = data;
-            this.status = status;
+            status = QuestStatus.None;
             value = 0;
         }
+        
+        public virtual void Enable() { }
 
-        /// <summary>
-        /// Increases the step's progress value and triggers a change notification.
-        /// </summary>
-        /// <param name="inc">Amount to increment the progress by.</param>
-        /// <returns>
-        /// <c>true</c> if progress increased,
-        /// <c>false</c> if the step was already at maximum progress.
-        /// </returns>
-        /// <remarks>
-        /// Value is clamped between <c>0</c> and <see cref="StepData.Amount"/>.
-        /// If the value hits its maximum, further increments return <c>false</c>.
-        /// </remarks>
-        public bool Increment(int inc)
-        {
-            if (value == data.Amount)
-            {
-                return false;
-            }
-            
-            value += inc;
-            value = Math.Clamp(value, 0, data.Amount);
-
-            Changed?.Invoke();
-            return true;
-        }
+        public virtual void Disable() { }
         
         /// <summary>
         /// Returns a human-readable description of the step's state and objective.
@@ -116,15 +94,12 @@ namespace Fsi.QuestSystem.Steps
         /// <returns>A string describing the current progress of this step.</returns>
         public string GetDescription()
         {
-            return data.StepType switch
-            {
-                StepType.None => "None",
-                // StepType.Enemy => $"Defeat {value}/{data.Amount} {data.Enemy.Name}",
-                StepType.NPC => $"Talk to {data.Npc.Name}",
-                StepType.Location => $"Go to location.name",
-                StepType.Item => $"Bring {value}/{data.Amount} {data.Item.Name} to {data.Npc}",
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            return $"Talk to {data.Npc.Name}";
+        }
+
+        protected void HasChanged()
+        {
+            Changed?.Invoke();
         }
     }
 }

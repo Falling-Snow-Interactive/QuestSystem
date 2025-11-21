@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Fsi.QuestSystem.Steps;
 using UnityEngine;
 
@@ -9,6 +8,12 @@ namespace Fsi.QuestSystem
     [Serializable]
     public class QuestInstance : ISerializationCallbackReceiver
     {
+        #region Events
+
+        public event Action Changed;
+        
+        #endregion
+        
         #region Public Properties
         
         /// <summary>
@@ -54,7 +59,7 @@ namespace Fsi.QuestSystem
         [SerializeField]
         private QuestStatus status;
 
-        [SerializeField]
+        [SerializeReference]
         private List<StepInstance> steps;
         
         #endregion
@@ -67,10 +72,17 @@ namespace Fsi.QuestSystem
             steps = new List<StepInstance>();
             foreach (StepData s in data.Steps)
             {
-                StepInstance stepInstance = StepFactory.CreateStep(s, steps.Count == 0
-                                                                          ? QuestStatus.Active
-                                                                          : QuestStatus.None);
+                // TODO - Factory - Kira
+                StepInstance stepInstance = new NpcStepInstance(s); // StepFactory.CreateStep(s, QuestStatus.None);
                 steps.Add(stepInstance);
+
+                stepInstance.Changed += OnStepChanged;
+            }
+
+            if (steps.Count > 0)
+            {
+                SetStepStatus(0, QuestStatus.Active);
+                steps[0].Enable();
             }
         }
 
@@ -144,6 +156,23 @@ namespace Fsi.QuestSystem
         }
         
         #endregion
+
+        public bool TryGetScenePosition(out Vector3 position)
+        {
+            if (TryGetActiveQuestStep(out StepInstance step) 
+                && step is IScenePosition scenePosition)
+            {
+                return scenePosition.TryGetScenePosition(out position);
+            }
+            
+            position = Vector3.zero;
+            return false;
+        }
+        
+        private void OnStepChanged()
+        {
+            Changed?.Invoke();
+        }
         
         #region Serialization
 

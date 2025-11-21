@@ -1,9 +1,6 @@
 using System;
 using Fsi.Characters.Data;
 using Fsi.Characters.Data.Selector;
-using Fsi.Gameplay;
-using Fsi.Inventory.Items;
-using Fsi.Inventory.Items.Selector;
 using UnityEngine;
 
 namespace Fsi.QuestSystem.Steps
@@ -30,57 +27,18 @@ namespace Fsi.QuestSystem.Steps
         
         #region Inspector Fields
         
-        [Tooltip("Type of quest step this entry represents.")]
-        [SerializeField]
-        private StepType stepType = StepType.None;
-        
-        [ShowIf(nameof(stepType), StepType.Enemy)]
-        [Tooltip("Enemy type to be defeated.")]
-        // [EnemySelector]
-        [SerializeField]
-        private string enemy;
-        
-        [ShowIf(nameof(stepType), Steps.StepType.NPC)]
         [Tooltip("NPC to interact with.")]
         [CharacterSelector]
         [SerializeField]
         private CharacterData npc;
         
-        [ShowIf(nameof(stepType), StepType.Item)]
-        [Tooltip("Item to deliver.")]
-        [ItemSelector]
+        [Tooltip("NPC instance ID.")]
         [SerializeField]
-        private ItemData item;
-        
-        [ShowIf(nameof(stepType), Steps.StepType.Item)]
-        [Tooltip("NPC to deliver item to.")]
-        [CharacterSelector]
-        [SerializeField]
-        private CharacterData deliverTo;
-        
-        [Tooltip("Depending on Step Type:\n" +
-                 "- Enemy: Number of enemies to defeat\n" +
-                 " -Item: Number of items to be delivered to the chosen NPC")]
-        [ShowIf(nameof(stepType), new []{StepType.Item, StepType.Enemy})]
-        [SerializeField]
-        private int amount = 1;
+        private int instanceId;
         
         #endregion
         
         #region Public Properties
-        
-        /// <summary>
-        /// Type of quest step this entry represents.
-        /// </summary>
-        public StepType StepType => stepType;
-        
-        /// <summary>
-        /// Enemy type that must be defeated to complete this step.
-        /// </summary>
-        /// <remarks>
-        /// Used when <see cref="StepType"/> is <see cref="Steps.StepType.Enemy"/>.
-        /// </remarks>
-        // public CharacterData Enemy => enemy;
         
         /// <summary>
         /// NPC to interact with as part of this step.
@@ -89,32 +47,11 @@ namespace Fsi.QuestSystem.Steps
         /// Used when <see cref="StepType"/> is <see cref="Steps.StepType.NPC"/>.
         /// </remarks>
         public CharacterData Npc => npc;
-        
+
         /// <summary>
-        /// Item that must be delivered as part of this step.
+        /// 
         /// </summary>
-        /// <remarks>
-        /// Used when <see cref="StepType"/> is <see cref="Steps.StepType.Item"/>.
-        /// </remarks>
-        public ItemData Item => item;
-        
-        /// <summary>
-        /// NPC that the item must be delivered to.
-        /// </summary>
-        /// <remarks>
-        /// Used when <see cref="StepType"/> is <see cref="Steps.StepType.Item"/>.
-        /// </remarks>
-        public CharacterData DeliverTo => deliverTo;
-        
-        /// <summary>
-        /// Amount associated with this step.
-        /// </summary>
-        /// <remarks>
-        /// <para>For <see cref="Steps.StepType.Enemy"/>: Number of enemies to defeat.</para>
-        /// <para>For <see cref="Steps.StepType.Item"/>: Number of items to deliver to the target NPC.</para>
-        /// <para>For other step types, this value is currently unused.</para>
-        /// </remarks>
-        public int Amount => amount;
+        public int InstanceID => instanceId;
         
         #endregion
 
@@ -128,19 +65,7 @@ namespace Fsi.QuestSystem.Steps
         /// </returns>
         public override string ToString()
         {
-            string s = $"{stepType} - ";
-            s += StepType switch
-            {
-                StepType.None => "",
-                StepType.Enemy => $"{enemy} x{Amount}",
-                StepType.NPC => $"{npc}",
-                // TODO - Go to location. Will probably just be attached to a trigger area that says "Hey! I'm part of X quest at Y step". - Kira
-                // StepType.Location => expr,
-                StepType.Item => $"{item} x{Amount}",
-                _ => "",
-            };
-
-            return s;
+            return npc ? $"Talk to {npc.ID}_{instanceId}" : "No npc";
         }
         
         #endregion

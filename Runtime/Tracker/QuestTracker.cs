@@ -288,7 +288,7 @@ namespace Fsi.QuestSystem.Tracker
         /// <param name="quest">The quest instance to pin.</param>
         public void PinQuest(QuestInstance quest)
         {
-            if (Contains(quest.ID))
+            if (pinnedID != quest.ID && Contains(quest.ID))
             {
                 UnpinQuest();
                 Debug.Log($"Quest Tracker | Pinning quest ({quest.ID}).");
