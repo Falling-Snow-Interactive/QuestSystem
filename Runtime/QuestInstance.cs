@@ -37,7 +37,14 @@ namespace Fsi.QuestSystem
         public QuestStatus Status
         {
             get => status;
-            set => status = value;
+            set
+            {
+                if (status != value)
+                {
+                    status = value;
+                    Changed?.Invoke();
+                }
+            }
         }
         
         /// <summary>

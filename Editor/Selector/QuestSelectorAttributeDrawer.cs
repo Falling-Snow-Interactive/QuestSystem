@@ -7,7 +7,7 @@ using UnityEditor;
 namespace Fsi.QuestSystem.Selector
 {
     [CustomPropertyDrawer(typeof(QuestSelectorAttribute))]
-    public class QuestSelectorAttributeDrawer : SelectorAttributeDrawer<QuestData, string>
+    public class QuestSelectorAttributeDrawer : SelectorAttributeDrawer<string, QuestData>
     {
         protected override List<QuestData> GetEntries() => QuestSystemSettings.Quests.Entries;
     }
