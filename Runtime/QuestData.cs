@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using Fsi.DataSystem;
 using Fsi.QuestSystem.Steps;
-using Fsi.Ui.Spacers;
+using Fsi.Ui.Dividers;
 using UnityEngine;
 
 namespace Fsi.QuestSystem
 {
-    [CreateAssetMenu(menuName = "Fsi/Quest System/Quests/Data", fileName = "New Quest Data")]
+    [CreateAssetMenu(menuName = Menu, fileName = "New Quest Data")]
     public class QuestData : ScriptableData<string>
     {
-        [Spacer]
+        // Asset Menu
+        private new const string Menu = ScriptableData<string>.Menu + "Quest System/Quest";
+        
+        [Divider]
         
         [Header("Steps")]
 
@@ -17,7 +20,7 @@ namespace Fsi.QuestSystem
         private List<StepData> steps = new();
         public List<StepData> Steps => steps;
         
-        [Spacer()]
+        [Divider]
 
         [Header("Quest Tracker Properties")]
 

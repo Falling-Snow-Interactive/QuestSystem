@@ -20,7 +20,7 @@ namespace Fsi.QuestSystem.Steps
         public NpcStepInstance(StepData data) : base(data)
         {
             characterData = data.Npc;
-            instanceID = data.InstanceID;
+            instanceID = data.NPCInstanceID;
         }
 
         public bool TryGetScenePosition(out Vector3 position)
@@ -33,6 +33,11 @@ namespace Fsi.QuestSystem.Steps
 
             position = Vector3.zero;
             return false;
+        }
+
+        public override string GetDescription()
+        {
+            return $"Talk to {Data.Npc.Name}";
         }
     }
 }

@@ -67,8 +67,15 @@ namespace Fsi.QuestSystem.Ui.Hud
 
         private void UpdatePosition(CharacterManager manager)
         {
-            hasPosition = quest.TryGetScenePosition(out position);
-            indicatorObject.gameObject.SetActive(hasPosition);
+            if (quest != null)
+            {
+                hasPosition = quest.TryGetScenePosition(out position);
+                indicatorObject.gameObject.SetActive(hasPosition);
+            }
+            else
+            {
+                indicatorObject.gameObject.SetActive(false);
+            }
         }
         
         private void ShowQuest(QuestInstance quest)

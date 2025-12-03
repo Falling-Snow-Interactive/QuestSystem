@@ -11,7 +11,7 @@ namespace Fsi.QuestSystem.Settings
         [SettingsProvider]
         public static SettingsProvider CreateSettingsProvider()
         {
-            SettingsProvider provider = new($"Fsi/{Name}", SettingsScope.Project)
+            SettingsProvider provider = new($"Falling Snow Interactive/{Name}", SettingsScope.Project)
             {
                 label = Name,
                 activateHandler = OnActivate,

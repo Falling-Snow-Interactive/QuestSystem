@@ -24,7 +24,7 @@ namespace Fsi.QuestSystem.Steps
         /// <summary>
         /// Invoked whenever the step's progress value changes.
         /// </summary>
-        public event Action Changed;
+        public event Action<StepInstance> Updated;
         
         #region Inspector Fields
         
@@ -55,8 +55,14 @@ namespace Fsi.QuestSystem.Steps
         public QuestStatus Status
         {
             get => status;
-            set => status = value;
+            set
+            {
+                status = value;
+                Updated?.Invoke(this);
+            }
         }
+
+        public bool ShouldAdvance { get; protected set; }
         
         /// <summary>
         /// Gets the current progress toward completing this step.
@@ -84,7 +90,7 @@ namespace Fsi.QuestSystem.Steps
         public virtual void Enable() { }
 
         public virtual void Disable() { }
-        
+
         /// <summary>
         /// Returns a human-readable description of the step's state and objective.
         /// </summary>
@@ -92,14 +98,11 @@ namespace Fsi.QuestSystem.Steps
         /// TODO: Localize these strings. - Kira
         /// </remarks>
         /// <returns>A string describing the current progress of this step.</returns>
-        public string GetDescription()
-        {
-            return $"Talk to {data.Npc.Name}";
-        }
+        public abstract string GetDescription();
 
         protected void HasChanged()
         {
-            Changed?.Invoke();
+            Updated?.Invoke(this);
         }
     }
 }

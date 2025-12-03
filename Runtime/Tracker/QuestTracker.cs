@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Fsi.Gameplay;
 using Fsi.General;
 using Fsi.QuestSystem.Data.Selector;
 using Fsi.QuestSystem.Settings;
@@ -83,7 +82,7 @@ namespace Fsi.QuestSystem.Tracker
         /// <summary>
         /// The quest currently pinned for quick reference (e.g., HUD tracking).
         /// </summary>
-        public QuestInstance PinnedQuest => TryGet(pinnedID, out QuestInstance quest) ? quest : null;
+        public QuestInstance PinnedQuest => TryGetQuest(pinnedID, out QuestInstance quest) ? quest : null;
         
         /// <summary>
         /// The full list of active quests currently tracked by the system.
@@ -120,7 +119,7 @@ namespace Fsi.QuestSystem.Tracker
             
             #endif
             
-            if (TryGet(pinnedID, out QuestInstance quest))
+            if (TryGetQuest(pinnedID, out QuestInstance quest))
             {
                 PinQuest(quest);
             }
@@ -142,7 +141,7 @@ namespace Fsi.QuestSystem.Tracker
         /// </returns>
         public bool Add(QuestInstance quest)
         {
-            if (!TryGet(quest.ID, out QuestInstance _))
+            if (!TryGetQuest(quest.ID, out QuestInstance _))
             {
                 Debug.Log($"Quest Tracker | Adding quest ({quest.ID}).");
                 quests.Add(quest);
@@ -167,33 +166,48 @@ namespace Fsi.QuestSystem.Tracker
         /// </summary>
         /// <param name="data">The quest data used to create the quest instance.</param>
         /// <returns>
-        /// True if added successfully;
-        /// false if a quest with the same ID already exists.
+        /// The quest instance added to the quest list.
         /// </returns>
-        public bool Add(QuestData data)
+        public QuestInstance Add(QuestData data)
         {
-            if (!TryGet(data.ID, out QuestInstance _))
+            QuestInstance quest = new(data);
+            Add(quest);
+            return quest;
+        }
+
+        public QuestInstance Add(string questID)
+        {
+            return QuestSystemSettings.Quests.TryGetEntry(questID, out QuestData data) 
+                       ? Add(data) 
+                       : null;
+        }
+
+        public bool TryAdd(QuestData data, out QuestInstance quest)
+        {
+            if (TryGetQuest(data.ID, out quest))
             {
-                QuestInstance quest = new(data);
-                return Add(quest);
+                Debug.LogWarning($"Quest ({quest.ID}) has already been added.");
+                return false;
             }
 
-            return false;
+            quest = Add(data);
+            return true;
         }
 
         /// <summary>
         /// Attempts to add a quest by ID using the global <see cref="QuestSystemSettings"/>.
         /// </summary>
         /// <param name="id">The ID of the quest to add.</param>
+        /// <param name="quest"></param>
         /// <returns>
         /// True if the quest was found and added;
         /// false if a quest with the same ID exists or if the ID does not match any quest.
         /// </returns>
-        public bool Add(string id)
+        public bool TryAdd(string id, out QuestInstance quest)
         {
-            if (!TryGet(id, out QuestInstance _) && QuestSystemSettings.Quests.TryGetEntry(id, out QuestData entry))
+            if (!TryGetQuest(id, out quest) && QuestSystemSettings.Quests.TryGetEntry(id, out QuestData data))
             {
-                return Add(entry);
+                return TryAdd(data, out quest);
             }
 
             return false;
@@ -219,7 +233,7 @@ namespace Fsi.QuestSystem.Tracker
         /// </returns>
         public bool Remove(QuestInstance quest)
         {
-            if (TryGet(quest.ID, out QuestInstance q))
+            if (TryGetQuest(quest.ID, out QuestInstance q))
             {
                 Debug.Log($"Quest Tracker | Removing quest ({quest.ID}).");
                 quests.Remove(q);
@@ -261,6 +275,22 @@ namespace Fsi.QuestSystem.Tracker
         #endregion
         
         #region Get
+
+        public QuestInstance GetOrCreateQuest(string questID)
+        {
+            if (TryGetQuest(questID, out QuestInstance quest))
+            {
+                return quest;
+            }
+
+            if (TryAdd(questID, out quest))
+            {
+                return quest;
+            }
+            
+            Debug.LogError($"Quest ({questID}) could not be created.", gameObject);
+            return null;
+        }
         
         /// <summary>
         /// Attempts to find a quest with the given ID.
@@ -273,7 +303,7 @@ namespace Fsi.QuestSystem.Tracker
         /// <returns>
         /// True if a quest with the specified ID was found; false otherwise.
         /// </returns>
-        public bool TryGet(string questID, out QuestInstance quest)
+        public bool TryGetQuest(string questID, out QuestInstance quest)
         {
             quest = quests.FirstOrDefault(x => x.ID == questID);
             return quest != null;
@@ -305,7 +335,7 @@ namespace Fsi.QuestSystem.Tracker
         /// </summary>
         public void UnpinQuest()
         {
-            if (TryGet(pinnedID, out QuestInstance p))
+            if (TryGetQuest(pinnedID, out QuestInstance p))
             {
                 Debug.Log($"Quest Tracker | Unpinning quest ({p.ID}).");
                 pinnedID = default;
@@ -319,27 +349,23 @@ namespace Fsi.QuestSystem.Tracker
         
         #region Status
 
-        public QuestStatus GetQuestStatus(string questID)
-        {
-            return TryGet(questID, out QuestInstance quest) ? quest.Status : QuestStatus.None;
-        }
+        // public bool TryGetQuestStatus(string questID, out QuestInstance quest)
+        // {
+        //     return TryGetQuest(questID, out quest);
+        // }
 
-        public bool SetQuestStatus(string questID, QuestStatus status)
+        public bool SetQuestStatus(string questID, QuestStatus status, out QuestInstance quest)
         {
-            if (TryGet(questID, out QuestInstance quest))
-            {
-                quest.Status = status;
-                return true;
-            }
-
-            return false;
+            quest = GetOrCreateQuest(questID);
+            quest.Status = status;
+            return true;
         }
 
         #region Step
         
-        public QuestStatus GetQuestStepStatus(string questID, int index)
+        public virtual QuestStatus GetQuestStepStatus(string questID, int index)
         {
-            if (TryGet(questID, out QuestInstance quest)
+            if (TryGetQuest(questID, out QuestInstance quest)
                 && quest.TryGetStep(index, out StepInstance step))
             {
                 return step.Status;
@@ -348,12 +374,24 @@ namespace Fsi.QuestSystem.Tracker
             return QuestStatus.None;
         }
 
-        public bool SetQuestStepStatus(string questID, int index, QuestStatus status)
+        public virtual bool SetQuestStepStatus(string questID, int index, QuestStatus status, out QuestInstance quest, out StepInstance step)
         {
-            if (TryGet(questID, out QuestInstance quest)
-                && quest.TryGetStep(index, out StepInstance step))
+            quest = GetOrCreateQuest(questID);
+            if (quest.TryGetStep(index, out step))
             {
                 step.Status = status;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool AdvanceStep(string questID, int index)
+        {
+            if (TryGetQuest(questID, out QuestInstance quest)
+                && quest.StepIndex == index)
+            {
+                quest.AdvanceStep();
                 return true;
             }
 

@@ -23,6 +23,7 @@
     "com.fallingsnowinteractive.characters": "0.0.1",
     "com.fallingsnowinteractive.inventory": "0.0.1",
     "com.fallingsnowinteractive.settings": "0.0.1",
-    "com.fallingsnowinteractive.ui": "0.0.2"
+    "com.fallingsnowinteractive.ui": "0.0.2",
+    "com.fallingsnowinteractive.enemies": "0.0.1"
   }
 }

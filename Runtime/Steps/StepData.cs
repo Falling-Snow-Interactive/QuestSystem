@@ -1,7 +1,11 @@
 using System;
 using Fsi.Characters.Data;
 using Fsi.Characters.Data.Selector;
+using Fsi.Enemies;
+using Fsi.Enemies.Libraries.Selectors;
+using Fsi.Gameplay;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Fsi.QuestSystem.Steps
 {
@@ -24,21 +28,44 @@ namespace Fsi.QuestSystem.Steps
         [HideInInspector]
         [SerializeField]
         private string name;
+
+        [SerializeField]
+        private StepType type;
         
         #region Inspector Fields
         
+        [ShowIf(nameof(type), StepType.NPC)]
         [Tooltip("NPC to interact with.")]
         [CharacterSelector]
         [SerializeField]
         private CharacterData npc;
         
+        [FormerlySerializedAs("instanceId")]
+        [ShowIf(nameof(type), StepType.NPC)]
         [Tooltip("NPC instance ID.")]
         [SerializeField]
-        private int instanceId;
+        private int npcInstanceID;
+
+        [ShowIf(nameof(type), StepType.Enemy)]
+        [EnemyLibrary]
+        [SerializeField]
+        private EnemyData enemy;
+
+        [ShowIf(nameof(type), StepType.Enemy)]
+        [SerializeField]
+        private int numberOfEnemy = 5;
+        
+        // [SerializeField]
+        // private 
         
         #endregion
         
         #region Public Properties
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public StepType Type => type;
         
         /// <summary>
         /// NPC to interact with as part of this step.
@@ -51,7 +78,11 @@ namespace Fsi.QuestSystem.Steps
         /// <summary>
         /// 
         /// </summary>
-        public int InstanceID => instanceId;
+        public int NPCInstanceID => npcInstanceID;
+
+        public EnemyData Enemy => enemy;
+
+        public int NumberOfEnemy => numberOfEnemy;
         
         #endregion
 
@@ -65,7 +96,15 @@ namespace Fsi.QuestSystem.Steps
         /// </returns>
         public override string ToString()
         {
-            return npc ? $"Talk to {npc.ID}_{instanceId}" : "No npc";
+            return type switch
+                   {
+                       StepType.None => "",
+                       StepType.Enemy => enemy ? $"Defeat {numberOfEnemy} {enemy.ID}" : "No enemy",
+                       StepType.NPC => npc ? $"Talk to {npc.ID}_{npcInstanceID}" : "No npc",
+                       StepType.Location => "",
+                       StepType.Item => "",
+                       _ => throw new ArgumentOutOfRangeException()
+                   };
         }
         
         #endregion

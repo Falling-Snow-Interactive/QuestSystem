@@ -2,7 +2,7 @@
     <Style src="project://database/Packages/com.fallingsnowinteractive.questsystem/Editor/Tracker/QuestTrackerEditor.uss?fileID=7433441132597879392&amp;guid=648b039e2619c4b6babacad0f5680a62&amp;type=3#QuestTrackerEditor" />
     <ui:VisualElement name="root" style="flex-grow: 1; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px;">
         <ui:Label text="Quest Tracker" name="title_label" />
-        <Fsi.Ui.Spacers.Spacer />
+        <Fsi.Ui.Dividers.Spacer />
         <ui:VisualElement name="enabled_group" style="flex-grow: 1;">
             <ui:VisualElement name="add_quest_group" style="flex-direction: row;">
                 <ui:DropdownField name="quest_dropdown" index="0" style="flex-grow: 1;" />

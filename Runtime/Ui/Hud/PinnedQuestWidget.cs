@@ -3,11 +3,17 @@ using Fsi.QuestSystem.Steps;
 using Fsi.QuestSystem.Tracker;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Fsi.QuestSystem.Ui.Hud
 {
     public class PinnedQuestWidget : MonoBehaviour
     {
+        private QuestInstance quest;
+
+        [SerializeField]
+        private RectTransform root;
+        
         [SerializeField]
         private List<GameObject> content = new();
         
@@ -20,6 +26,8 @@ namespace Fsi.QuestSystem.Ui.Hud
         [SerializeField]
         private TMP_Text stepPrefab;
 
+        private TMP_Text stepText;
+
         #region MonoBehaviour
         
         private void Awake()
@@ -30,14 +38,18 @@ namespace Fsi.QuestSystem.Ui.Hud
         
         private void OnEnable()
         {
-            QuestTracker.QuestPinned += OnQuestQuestPinned;
-            QuestTracker.QuestUnpinned += OnQuestQuestUnpinned;
+            QuestTracker.QuestPinned += OnQuestPinned;
+            QuestTracker.QuestUnpinned += OnQuestUnpinned;
+
+            QuestInstance.Updated += OnQuestUpdated;
         }
 
         private void OnDisable()
         {
-            QuestTracker.QuestPinned -= OnQuestQuestPinned;
-            QuestTracker.QuestUnpinned -= OnQuestQuestUnpinned;
+            QuestTracker.QuestPinned -= OnQuestPinned;
+            QuestTracker.QuestUnpinned -= OnQuestUnpinned;
+
+            QuestInstance.Updated -= OnQuestUpdated;
         }
         
         #endregion
@@ -64,15 +76,18 @@ namespace Fsi.QuestSystem.Ui.Hud
         
         #region Update Quest
 
-        private void ShowQuest(QuestInstance quest)
+        private void Refresh()
         {
+            ClearQuest();
             ShowContent();
             titleText.text = quest.Name;
             if (quest.TryGetActiveQuestStep(out StepInstance step))
             {
-                TMP_Text stepText = Instantiate(stepPrefab, stepGroup);
+                stepText = Instantiate(stepPrefab, stepGroup);
                 stepText.text = step.GetDescription();
             }
+            
+            LayoutRebuilder.ForceRebuildLayoutImmediate(root);
         }
 
         private void ClearQuest()
@@ -90,14 +105,26 @@ namespace Fsi.QuestSystem.Ui.Hud
 
         #region Event callbacks
         
-        private void OnQuestQuestPinned(QuestInstance quest)
+        private void OnQuestPinned(QuestInstance quest)
         {
-            ShowQuest(quest);
+            this.quest = quest;
+            Refresh();
         }
         
-        private void OnQuestQuestUnpinned(QuestInstance quest)
+        private void OnQuestUnpinned(QuestInstance quest)
         {
-            ClearQuest();
+            if (this.quest.ID == quest.ID)
+            {
+                ClearQuest();
+            }
+        }
+
+        private void OnQuestUpdated(QuestInstance quest)
+        {
+            if (this.quest.ID == quest.ID)
+            {
+                Refresh();
+            }
         }
         
         #endregion

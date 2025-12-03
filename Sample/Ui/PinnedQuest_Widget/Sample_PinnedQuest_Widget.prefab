@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d96c177967e047edb3123edb2faf271, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Fsi.QuestSystem.Runtime::Fsi.QuestSystem.PinnedQuestWidget
+  root: {fileID: 6791781993351734214}
   content:
   - {fileID: 5018182493113583990}
   titleText: {fileID: 1139077023834571677}

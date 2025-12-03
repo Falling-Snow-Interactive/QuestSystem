@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Fsi.QuestSystem.Steps;
+using Fsi.QuestSystem.Tracker;
 using UnityEngine;
 
 namespace Fsi.QuestSystem
@@ -10,7 +11,7 @@ namespace Fsi.QuestSystem
     {
         #region Events
 
-        public event Action Changed;
+        public static event Action<QuestInstance> Updated;
         
         #endregion
         
@@ -42,7 +43,7 @@ namespace Fsi.QuestSystem
                 if (status != value)
                 {
                     status = value;
-                    Changed?.Invoke();
+                    Updated?.Invoke(this);
                 }
             }
         }
@@ -50,7 +51,9 @@ namespace Fsi.QuestSystem
         /// <summary>
         /// 
         /// </summary>
-        public float Progress => TryGetActiveQuestStep(out int index) ? (float)index / steps.Count : 0;
+        public float Progress => steps.Count > 0 ? (float)Mathf.Clamp(stepIndex, 0, steps.Count) / steps.Count : 0;
+
+        public int StepIndex => stepIndex;
         
         #endregion
         
@@ -68,6 +71,9 @@ namespace Fsi.QuestSystem
 
         [SerializeReference]
         private List<StepInstance> steps;
+
+        [SerializeField]
+        private int stepIndex = 0;
         
         #endregion
 
@@ -80,86 +86,68 @@ namespace Fsi.QuestSystem
             foreach (StepData s in data.Steps)
             {
                 // TODO - Factory - Kira
-                StepInstance stepInstance = new NpcStepInstance(s); // StepFactory.CreateStep(s, QuestStatus.None);
+                StepInstance stepInstance = StepFactory.CreateStep(s);
                 steps.Add(stepInstance);
-
-                stepInstance.Changed += OnStepChanged;
             }
 
             if (steps.Count > 0)
             {
-                SetStepStatus(0, QuestStatus.Active);
+                steps[0].Status = QuestStatus.Active;
                 steps[0].Enable();
+                steps[0].Updated += OnStepUpdated;
             }
+
+            stepIndex = 0;
         }
 
         #region Steps
         
-        public bool TryGetStep(int index, out StepInstance stepInstance)
+        public bool TryGetStep(int index, out StepInstance step)
         {
-            if (steps.Count < index)
-            {
-                stepInstance = steps[index];
-                return true;
-            }
-
-            stepInstance = null;
-            return false;
-        }
-
-        public bool TryGetActiveQuestStep(out int index, out StepInstance step)
-        {
-            step = null;
-            for (index = 0; index < steps.Count; index++)
+            if (index < steps.Count)
             {
                 step = steps[index];
-                if (step.Status == QuestStatus.Active)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        
-        public bool TryGetActiveQuestStep(out int index)
-        {
-            for (index = 0; index < steps.Count; index++)
-            {
-                StepInstance step = steps[index];
-                if (step.Status == QuestStatus.Active)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        
-        public bool TryGetActiveQuestStep(out StepInstance step)
-        {
-            step = null;
-            foreach (StepInstance s in steps)
-            {
-                step = s;
-                if (step.Status == QuestStatus.Active)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool SetStepStatus(int index, QuestStatus status)
-        {
-            if (steps.Count > index)
-            {
-                steps[index].Status = status;
                 return true;
             }
 
+            step = null;
             return false;
+        }
+
+        public bool TryGetActiveQuestStep(out StepInstance step)
+        {
+            return TryGetStep(stepIndex, out step);
+        }
+
+        public void AdvanceStep()
+        {
+            QuestTracker.Instance.SetQuestStepStatus(data.ID, stepIndex, QuestStatus.Complete, 
+                                                     out QuestInstance q, out StepInstance s);
+            s.Disable();
+            s.Updated -= OnStepUpdated;
+            stepIndex++;
+            if (stepIndex < steps.Count)
+            {
+                QuestTracker.Instance.SetQuestStepStatus(data.ID, stepIndex, QuestStatus.Active, out q, out s);
+                s.Enable();
+                s.Updated += OnStepUpdated;
+            }
+            else
+            {
+                // TODO - Finish quest here. Award stuff. Probably... - Kira
+                // QuestTracker.Instance.SetQuestStepStatus()
+            }
+
+            Updated?.Invoke(this);
+        }
+        
+        private void OnStepUpdated(StepInstance stepInstance)
+        {
+            if (stepInstance.ShouldAdvance)
+            {
+                AdvanceStep();
+            }
+            Updated?.Invoke(this);
         }
         
         #endregion
@@ -174,11 +162,6 @@ namespace Fsi.QuestSystem
             
             position = Vector3.zero;
             return false;
-        }
-        
-        private void OnStepChanged()
-        {
-            Changed?.Invoke();
         }
         
         #region Serialization
